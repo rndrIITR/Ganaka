@@ -1,0 +1,26 @@
+{
+  "name": "ganaka",
+  "version": "0.4.0",
+  "description": "GAṆAKA — Scientific & Engineering Computation Workbench for mathematics, numerical methods, statistics, probability, data analysis, unit conversion, engineering calculations, and scientific visualization.",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node tests/core.test.mjs",
+    "test:browser": "node tests/browser-smoke.mjs",
+    "serve": "python3 -m http.server 8080"
+  },
+  "keywords": [
+    "scientific-calculator", "scientific-computing", "numerical-methods",
+    "numerical-analysis", "mathematics", "statistics", "probability",
+    "data-analysis", "engineering-calculator", "engineering-tools",
+    "unit-converter", "scientific-visualization", "javascript", "web-app", "pwa"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rndrIITR/Ganaka"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.0"
+  }
+}

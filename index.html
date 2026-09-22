@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAṆAKA — Scientific Calculator &amp; Engineering Computation Workbench</title>
+<meta name="description" content="GAṆAKA is an open scientific and engineering computation workbench for mathematics, numerical methods, statistics, probability, data analysis, unit conversion, engineering calculations and scientific visualization.">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="public/manifest.webmanifest">
+<link rel="icon" href="public/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main-workspace">Skip to workspace</a>
+
+<header class="app-header">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">गणक</span>
+    <div class="brand-text">
+      <span class="brand-name">GAṆAKA</span>
+      <span class="brand-tagline">Compute • Analyze • Visualize • Engineer</span>
+    </div>
+  </div>
+
+  <form class="command-bar" id="command-form" role="search" aria-label="Command bar">
+    <label for="command-input" class="visually-hidden">Command input — type an expression or command</label>
+    <input type="text" id="command-input" name="command" placeholder="e.g. 2+2, convert 10 MPa to Pa, weather Roorkee, currency 1000 INR USD" autocomplete="off">
+    <button type="submit">Run</button>
+  </form>
+
+  <div class="header-actions">
+    <label for="angle-mode-select" class="visually-hidden">Angle mode</label>
+    <select id="angle-mode-select" title="Angle mode">
+      <option value="radians">Radians</option>
+      <option value="degrees">Degrees</option>
+      <option value="gradians">Gradians</option>
+    </select>
+    <button type="button" id="theme-toggle" aria-label="Toggle color theme">🌓</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <nav class="app-nav" aria-label="GAṆAKA workspaces">
+    <ul role="tablist" aria-orientation="vertical" id="workspace-nav">
+      <li><button class="nav-btn" data-workspace="home" role="tab" aria-selected="true">Home</button></li>
+      <li><button class="nav-btn" data-workspace="calculator" role="tab" aria-selected="false">Calculator</button></li>
+      <li><button class="nav-btn" data-workspace="units" role="tab" aria-selected="false">Units</button></li>
+      <li><button class="nav-btn" data-workspace="calculus" role="tab" aria-selected="false">Calculus</button></li>
+      <li><button class="nav-btn" data-workspace="statistics" role="tab" aria-selected="false">Statistics</button></li>
+      <li><button class="nav-btn" data-workspace="probability" role="tab" aria-selected="false">Probability</button></li>
+      <li><button class="nav-btn" data-workspace="linear-algebra" role="tab" aria-selected="false">Linear Algebra</button></li>
+      <li><button class="nav-btn" data-workspace="data" role="tab" aria-selected="false">Data</button></li>
+      <li><button class="nav-btn" data-workspace="visualization" role="tab" aria-selected="false">Visualization</button></li>
+      <li><button class="nav-btn" data-workspace="engineering" role="tab" aria-selected="false">Engineering</button></li>
+      <li><button class="nav-btn" data-workspace="global" role="tab" aria-selected="false">Global</button></li>
+      <li><button class="nav-btn" data-workspace="history" role="tab" aria-selected="false">History</button></li>
+      <li><button class="nav-btn" data-workspace="settings" role="tab" aria-selected="false">Settings</button></li>
+    </ul>
+  </nav>
+
+  <main id="main-workspace" class="app-main">
+
+    <!-- ============ HOME ============ -->
+    <section class="workspace" id="workspace-home" data-workspace="home">
+      <h1>GAṆAKA <span class="devanagari">गणक</span></h1>
+      <p class="subtitle">Scientific &amp; Engineering Computation Workbench</p>
+      <p class="tagline-large">Compute • Analyze • Visualize • Engineer</p>
+      <p class="disclaimer-inline">GAṆAKA is intended for scientific computation, engineering analysis, education, research and exploratory use. Safety-critical engineering decisions require independent verification by qualified professionals and applicable standards, codes and project-specific requirements.</p>
+
+      <h2>Quick actions</h2>
+      <div class="quick-actions" id="quick-actions">
+        <button data-goto="calculator">Scientific Calculator</button>
+        <button data-goto="units">Unit Converter</button>
+        <button data-goto="statistics">Statistics</button>
+        <button data-goto="probability">Probability</button>
+        <button data-goto="linear-algebra">Linear Algebra</button>
+        <button data-goto="data">Data Analysis</button>
+        <button data-goto="visualization">Visualization</button>
+        <button data-goto="engineering">Engineering</button>
+        <button data-goto="global">Weather &amp; Currency</button>
+      </div>
+
+      <h2>Command bar examples</h2>
+      <ul class="command-examples">
+        <li><code>2 + 2</code></li>
+        <li><code>sin(pi/2)</code></li>
+        <li><code>5!</code></li>
+        <li><code>convert 10 MPa to Pa</code></li>
+        <li><code>differentiate x^3 at 2</code></li>
+        <li><code>integrate x^2 from 0 to 1</code></li>
+        <li><code>solve x^2 - 4</code></li>
+        <li><code>weather Roorkee</code></li>
+        <li><code>currency 1000 INR USD</code></li>
+      </ul>
+
+      <h2>v0.4.0 scope</h2>
+      <p>This release implements a deliberately scoped core: scientific calculator, unit conversion with dimensional checking, numerical calculus, descriptive statistics with OLS regression, eight probability distributions, core linear algebra, CSV data analysis, an X-Y SVG plot, three engineering calculators, live weather and currency, history and settings. See <code>docs/BUILD_STATUS.md</code> for exactly what is implemented vs. planned for later releases.</p>
+    </section>
+
+    <!-- ============ CALCULATOR ============ -->
+    <section class="workspace" id="workspace-calculator" data-workspace="calculator" hidden>
+      <h1>Scientific Calculator</h1>
+      <p>Secure tokenizer → parser → AST → evaluator. No <code>eval()</code>. Supports + − × ÷ % ^, parentheses, factorial (<code>!</code>), <code>C(n,r)</code>, <code>P(n,r)</code>, standard functions, and the constants <code>pi</code>, <code>e</code>, <code>euler</code>.</p>
+      <form id="calculator-form" class="stacked-form">
+        <label for="calc-expression">Expression</label>
+        <input type="text" id="calc-expression" placeholder="e.g. 2 + 2, sin(pi/2), 5!, C(5,2)" value="2 + 2">
+        <button type="submit">Calculate</button>
+      </form>
+      <p class="hint">Angle mode (radians/degrees/gradians) is set from the header selector and applies to sin, cos, tan, asin, acos, atan.</p>
+      <div class="quick-actions">
+        <button type="button" data-fill-calc="sin(pi/2)">sin(pi/2)</button>
+        <button type="button" data-fill-calc="5!">5!</button>
+        <button type="button" data-fill-calc="C(5,2)">C(5,2)</button>
+        <button type="button" data-fill-calc="P(5,2)">P(5,2)</button>
+        <button type="button" data-fill-calc="sqrt(2)">sqrt(2)</button>
+        <button type="button" data-fill-calc="gamma(0.5)">gamma(0.5)</button>
+      </div>
+    </section>
+
+    <!-- ============ UNITS ============ -->
+    <section class="workspace" id="workspace-units" data-workspace="units" hidden>
+      <h1>Unit Conversion &amp; Dimensional Checking</h1>
+      <p>One centralized unit registry (<code>src/core/units.js</code>). No UI component contains its own conversion formula.</p>
+      <form id="units-form" class="stacked-form">
+        <label for="unit-value">Value</label>
+        <input type="number" id="unit-value" value="1" step="any">
+        <label for="unit-from">From unit</label>
+        <select id="unit-from"></select>
+        <label for="unit-to">To unit</label>
+        <select id="unit-to"></select>
+        <button type="submit">Convert</button>
+      </form>
+
+      <h2>Dimensional check</h2>
+      <p>Try adding two quantities with incompatible dimensions (e.g. 5 m + 3 kg) to see <code>DIMENSION_ERROR</code> in action.</p>
+      <form id="dimension-form" class="stacked-form">
+        <label for="dim-value1">Quantity 1 value</label>
+        <input type="number" id="dim-value1" value="5" step="any">
+        <label for="dim-unit1">Quantity 1 unit</label>
+        <select id="dim-unit1"></select>
+        <label for="dim-value2">Quantity 2 value</label>
+        <input type="number" id="dim-value2" value="3" step="any">
+        <label for="dim-unit2">Quantity 2 unit</label>
+        <select id="dim-unit2"></select>
+        <button type="submit">Add quantities</button>
+      </form>
+    </section>
+
+    <!-- ============ CALCULUS ============ -->
+    <section class="workspace" id="workspace-calculus" data-workspace="calculus" hidden>
+      <h1>Numerical Calculus</h1>
+
+      <h2>Differentiation</h2>
+      <form id="derivative-form" class="stacked-form">
+        <label for="deriv-fn">f(x) =</label>
+        <input type="text" id="deriv-fn" value="x^3">
+        <label for="deriv-x">at x =</label>
+        <input type="number" id="deriv-x" value="2" step="any">
+        <label for="deriv-method">Method</label>
+        <select id="deriv-method">
+          <option value="central" selected>Central difference</option>
+          <option value="forward">Forward difference</option>
+          <option value="backward">Backward difference</option>
+        </select>
+        <button type="submit">Differentiate</button>
+      </form>
+
+      <h2>Integration</h2>
+      <form id="integral-form" class="stacked-form">
+        <label for="int-fn">f(x) =</label>
+        <input type="text" id="int-fn" value="x^2">
+        <label for="int-a">from a =</label>
+        <input type="number" id="int-a" value="0" step="any">
+        <label for="int-b">to b =</label>
+        <input type="number" id="int-b" value="1" step="any">
+        <label for="int-method">Method</label>
+        <select id="int-method">
+          <option value="adaptive-simpson" selected>Adaptive Simpson</option>
+          <option value="simpson13">Simpson 1/3</option>
+          <option value="trapezoidal">Trapezoidal</option>
+        </select>
+        <button type="submit">Integrate</button>
+      </form>
+
+      <h2>Root finding</h2>
+      <form id="root-form" class="stacked-form">
+        <label for="root-fn">f(x) =</label>
+        <input type="text" id="root-fn" value="x^2 - 4">
+        <label for="root-method">Method</label>
+        <select id="root-method">
+          <option value="bisection" selected>Bisection</option>
+          <option value="falseposition">False position</option>
+          <option value="newton">Newton</option>
+          <option value="secant">Secant</option>
+        </select>
+        <label for="root-a">a / x0</label>
+        <input type="number" id="root-a" value="0" step="any">
+        <label for="root-b">b / x1 (bisection, false position, secant only)</label>
+        <input type="number" id="root-b" value="5" step="any">
+        <button type="submit">Solve</button>
+      </form>
+    </section>
+
+    <!-- ============ STATISTICS ============ -->
+    <section class="workspace" id="workspace-statistics" data-workspace="statistics" hidden>
+      <h1>Descriptive Statistics &amp; OLS Regression</h1>
+      <form id="stats-form" class="stacked-form">
+        <label for="stats-data">Data (comma or newline separated)</label>
+        <textarea id="stats-data" rows="3">1, 2, 3, 4, 5</textarea>
+        <button type="submit">Calculate statistics</button>
+      </form>
+
+      <h2>Correlation &amp; simple linear regression (y = a + bx)</h2>
+      <form id="regression-form" class="stacked-form">
+        <label for="reg-x">x values</label>
+        <textarea id="reg-x" rows="2">1, 2, 3, 4, 5</textarea>
+        <label for="reg-y">y values</label>
+        <textarea id="reg-y" rows="2">2, 4, 6, 8, 10</textarea>
+        <button type="submit">Run regression</button>
+      </form>
+    </section>
+
+    <!-- ============ PROBABILITY ============ -->
+    <section class="workspace" id="workspace-probability" data-workspace="probability" hidden>
+      <h1>Probability Distributions</h1>
+      <p>v0.4 practical subset: Bernoulli, Binomial, Poisson, Normal, Uniform, Exponential, Gamma, Weibull.</p>
+      <form id="probability-form" class="stacked-form">
+        <label for="prob-dist">Distribution</label>
+        <select id="prob-dist">
+          <option value="normal">Normal</option>
+          <option value="binomial">Binomial</option>
+          <option value="poisson">Poisson</option>
+          <option value="bernoulli">Bernoulli</option>
+          <option value="uniform">Uniform</option>
+          <option value="exponential">Exponential</option>
+          <option value="gamma">Gamma</option>
+          <option value="weibull">Weibull</option>
+        </select>
+        <div id="prob-params" class="dynamic-params"></div>
+        <button type="submit">Calculate</button>
+      </form>
+    </section>
+
+    <!-- ============ LINEAR ALGEBRA ============ -->
+    <section class="workspace" id="workspace-linear-algebra" data-workspace="linear-algebra" hidden>
+      <h1>Linear Algebra</h1>
+      <form id="matrix-form" class="stacked-form">
+        <label for="matrix-a">Matrix A (rows separated by newline, entries by comma or space)</label>
+        <textarea id="matrix-a" rows="3">1, 2
+3, 4</textarea>
+        <label for="matrix-b">Matrix B / vector b (for multiply, add, or Ax=b)</label>
+        <textarea id="matrix-b" rows="3">5
+6</textarea>
+        <div class="quick-actions">
+          <button type="submit" data-op="determinant">Determinant</button>
+          <button type="submit" data-op="trace">Trace</button>
+          <button type="submit" data-op="transpose">Transpose</button>
+          <button type="submit" data-op="inverse">Inverse</button>
+          <button type="submit" data-op="multiply">A × B</button>
+          <button type="submit" data-op="add">A + B</button>
+          <button type="submit" data-op="solve">Solve Ax = b</button>
+        </div>
+      </form>
+
+      <h2>Vector operations</h2>
+      <form id="vector-form" class="stacked-form">
+        <label for="vector-u">Vector u (comma separated)</label>
+        <input type="text" id="vector-u" value="1, 2, 3">
+        <label for="vector-v">Vector v (comma separated)</label>
+        <input type="text" id="vector-v" value="4, 5, 6">
+        <div class="quick-actions">
+          <button type="submit" data-op="dot">Dot product</button>
+          <button type="submit" data-op="norm-u">‖u‖</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ DATA ============ -->
+    <section class="workspace" id="workspace-data" data-workspace="data" hidden>
+      <h1>Data Analysis (CSV)</h1>
+      <p>Parsing happens entirely in your browser. Your file is never uploaded anywhere.</p>
+      <form id="csv-form" class="stacked-form">
+        <label for="csv-file">Select a CSV file</label>
+        <input type="file" id="csv-file" accept=".csv,text/csv">
+        <label for="csv-paste">...or paste CSV text (<span class="demo-label">DEMO DATA</span> below)</label>
+        <textarea id="csv-paste" rows="5">Date,Reservoir,Deflection
+2026-01-01,100.2,2.1
+2026-01-02,101.4,2.3
+2026-01-03,102.1,2.5</textarea>
+        <button type="submit">Analyze</button>
+      </form>
+      <div id="csv-preview" class="data-preview" aria-live="polite"></div>
+    </section>
+
+    <!-- ============ VISUALIZATION ============ -->
+    <section class="workspace" id="workspace-visualization" data-workspace="visualization" hidden>
+      <h1>Scientific Visualization — X-Y Plot</h1>
+      <form id="plot-form" class="stacked-form">
+        <label for="plot-data">Data points (x,y per line)</label>
+        <textarea id="plot-data" rows="6">0,0
+1,1
+2,4
+3,9</textarea>
+        <label for="plot-xlabel">X-axis label</label>
+        <input type="text" id="plot-xlabel" value="x">
+        <label for="plot-ylabel">Y-axis label</label>
+        <input type="text" id="plot-ylabel" value="y">
+        <button type="submit">Plot</button>
+      </form>
+      <div id="plot-output" class="plot-output" aria-live="polite"></div>
+    </section>
+
+    <!-- ============ ENGINEERING ============ -->
+    <section class="workspace" id="workspace-engineering" data-workspace="engineering" hidden>
+      <h1>Engineering Calculators</h1>
+
+      <h2>Hydrostatic pressure — P = ρgh</h2>
+      <form id="hydrostatic-form" class="stacked-form">
+        <label for="hydro-rho">Density ρ (kg/m³)</label>
+        <input type="number" id="hydro-rho" value="1000" step="any">
+        <label for="hydro-h">Depth h (m)</label>
+        <input type="number" id="hydro-h" value="10" step="any">
+        <label for="hydro-g">Gravity g (m/s²)</label>
+        <input type="number" id="hydro-g" value="9.81" step="any">
+        <button type="submit">Calculate</button>
+      </form>
+
+      <h2>Reynolds number — Re = ρVD/μ</h2>
+      <form id="reynolds-form" class="stacked-form">
+        <label for="re-rho">Density ρ (kg/m³)</label>
+        <input type="number" id="re-rho" value="1000" step="any">
+        <label for="re-v">Velocity V (m/s)</label>
+        <input type="number" id="re-v" value="2" step="any">
+        <label for="re-d">Characteristic length D (m)</label>
+        <input type="number" id="re-d" value="0.05" step="any">
+        <label for="re-mu">Dynamic viscosity μ (Pa·s)</label>
+        <input type="number" id="re-mu" value="0.001" step="any">
+        <button type="submit">Calculate</button>
+      </form>
+
+      <h2>Manning equation — V = (1/n)R^(2/3)S^(1/2)</h2>
+      <form id="manning-form" class="stacked-form">
+        <label for="man-n">Roughness coefficient n</label>
+        <input type="number" id="man-n" value="0.013" step="any">
+        <label for="man-r">Hydraulic radius R (m)</label>
+        <input type="number" id="man-r" value="1" step="any">
+        <label for="man-s">Slope S (m/m)</label>
+        <input type="number" id="man-s" value="0.001" step="any">
+        <button type="submit">Calculate</button>
+      </form>
+    </section>
+
+    <!-- ============ GLOBAL ============ -->
+    <section class="workspace" id="workspace-global" data-workspace="global" hidden>
+      <h1>Global Tools — Weather &amp; Currency</h1>
+
+      <h2>Weather</h2>
+      <form id="weather-form" class="stacked-form">
+        <label for="weather-city">City</label>
+        <input type="text" id="weather-city" value="Roorkee">
+        <button type="submit">Check weather</button>
+      </form>
+      <div id="weather-output" aria-live="polite"></div>
+
+      <h2>Currency</h2>
+      <form id="currency-form" class="stacked-form">
+        <label for="currency-amount">Amount</label>
+        <input type="number" id="currency-amount" value="1000" step="any">
+        <label for="currency-base">Base</label>
+        <select id="currency-base"></select>
+        <label for="currency-target">Target</label>
+        <select id="currency-target"></select>
+        <button type="submit">Convert</button>
+      </form>
+      <div id="currency-output" aria-live="polite"></div>
+    </section>
+
+    <!-- ============ HISTORY ============ -->
+    <section class="workspace" id="workspace-history" data-workspace="history" hidden>
+      <h1>History</h1>
+      <div class="quick-actions">
+        <button type="button" id="history-clear">Clear all history</button>
+      </div>
+      <div id="history-list" aria-live="polite"></div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section class="workspace" id="workspace-settings" data-workspace="settings" hidden>
+      <h1>Settings</h1>
+      <form id="settings-form" class="stacked-form">
+        <label for="set-decimals">Decimal places</label>
+        <input type="number" id="set-decimals" min="0" max="15" value="4">
+        <label for="set-sigfigs">Significant figures</label>
+        <input type="number" id="set-sigfigs" min="1" max="15" value="6">
+        <label for="set-scientific">
+          <input type="checkbox" id="set-scientific"> Use scientific notation
+        </label>
+        <label for="set-tolerance">Numerical tolerance</label>
+        <input type="number" id="set-tolerance" value="0.0000000001" step="any">
+        <label for="set-unit-system">Default unit system</label>
+        <select id="set-unit-system">
+          <option value="SI">SI</option>
+          <option value="Imperial">Imperial</option>
+        </select>
+        <label for="set-angle-mode">Default angle mode</label>
+        <select id="set-angle-mode">
+          <option value="radians">Radians</option>
+          <option value="degrees">Degrees</option>
+          <option value="gradians">Gradians</option>
+        </select>
+        <label for="set-currency">Default currency</label>
+        <select id="set-currency"></select>
+        <label for="set-temperature">Temperature unit</label>
+        <select id="set-temperature">
+          <option value="C">°C</option>
+          <option value="F">°F</option>
+          <option value="K">K</option>
+        </select>
+        <label for="set-theme">Theme</label>
+        <select id="set-theme">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+        <button type="submit">Save settings</button>
+        <button type="button" id="settings-reset">Reset to defaults</button>
+      </form>
+      <p class="hint" id="settings-saved-hint" role="status"></p>
+    </section>
+
+  </main>
+</div>
+
+<footer class="app-footer">
+  <div id="result-panel" class="result-panel" aria-live="polite">
+    <h2>Result</h2>
+    <p class="result-placeholder">Run a calculation to see Result / Method / Inputs / Units / Diagnostics here.</p>
+  </div>
+  <p class="version-line">GAṆAKA v0.4.0 · <a href="docs/BUILD_STATUS.md">Build status</a> · Engineering disclaimer: for education, research and exploratory use — safety-critical decisions require independent professional verification.</p>
+</footer>
+
+<script src="src/core/errors.js"></script>
+<script src="src/core/constants.js"></script>
+<script src="src/core/parser.js"></script>
+<script src="src/core/numerical.js"></script>
+<script src="src/core/linear-algebra.js"></script>
+<script src="src/core/statistics.js"></script>
+<script src="src/core/probability.js"></script>
+<script src="src/core/units.js"></script>
+<script src="src/core/engineering.js"></script>
+<script src="src/data.js"></script>
+<script src="src/viz.js"></script>
+<script src="src/services/history.js"></script>
+<script src="src/services/settings.js"></script>
+<script src="src/services/weather.js"></script>
+<script src="src/services/currency.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
